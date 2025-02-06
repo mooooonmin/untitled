@@ -1,0 +1,68 @@
+<!-- html -->
+<main id="main-content">
+    <h2>키보드 접근성 데모</h2>
+    <p>
+      이 페이지는 키보드 접근성의 여러 측면을 시연합니다. Tab 키를 사용하여
+      페이지를 탐색해보세요.
+    </p>
+    <button id="openModal" aria-keyshortcuts="Control+O">
+      모달 열기 (Ctrl+O)
+    </button>
+  </main>
+   
+  <dialog id="modal" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">모달 제목</h2>
+    <p>이것은 모달 내용입니다. ESC 키를 눌러 모달을 닫을 수 있습니다.</p>
+    <button id="closeModal">닫기</button>
+  </dialog>
+   
+  <div id="shortcutSettings">
+    <h2>단축키 설정</h2>
+    <label>
+      <input type="checkbox" id="enableShortcuts" checked /> 단축키 활성화
+    </label>
+    <button id="remapShortcut">단축키 재설정</button>
+  </div>
+
+  <script>
+    // js
+const enableShortcutsCheckbox = document.getElementById('enableShortcuts');
+const remapShortcutButton = document.getElementById('remapShortcut');
+ 
+let shortcutEnabled = true;
+let shortcutKey = 'o';
+ 
+document.addEventListener('keydown', function (event) {
+  if (
+    shortcutEnabled &&
+    event.ctrlKey &&
+    event.key.toLowerCase() === shortcutKey
+  ) {
+    event.preventDefault();
+    openModal();
+  }
+});
+ 
+function updateModalButtonText() {
+  openModalButton.textContent = `모달 열기 (Ctrl+${shortcutKey.toUpperCase()})`;
+  openModalButton.setAttribute(
+    'aria-keyshortcuts',
+    `Control+${shortcutKey.toUpperCase()}`,
+  );
+}
+ 
+enableShortcutsCheckbox.addEventListener('change', function () {
+  shortcutEnabled = this.checked;
+});
+ 
+remapShortcutButton.addEventListener('click', function () {
+  const newShortcut = prompt('새로운 단축키를 입력하세요 (단일 문자):');
+  if (newShortcut && newShortcut.length === 1) {
+    shortcutKey = newShortcut.toLowerCase();
+    updateModalButtonText();
+    alert(`단축키가 Ctrl+${shortcutKey.toUpperCase()}로 변경되었습니다.`);
+  }
+});
+ 
+updateModalButtonText();
+  </script>
