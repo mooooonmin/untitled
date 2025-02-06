@@ -1,0 +1,55 @@
+<!-- html -->
+<main id="main-content">
+    <h2>키보드 접근성 데모</h2>
+    <p>
+      이 페이지는 키보드 접근성의 여러 측면을 시연합니다. Tab 키를 사용하여
+      페이지를 탐색해보세요.
+    </p>
+    <button id="openModal" aria-keyshortcuts="Control+O">
+      모달 열기 (Ctrl+O)
+    </button>
+  </main>
+   
+  <dialog id="modal" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">모달 제목</h2>
+    <p>이것은 모달 내용입니다. ESC 키를 눌러 모달을 닫을 수 있습니다.</p>
+    <button id="closeModal">닫기</button>
+  </dialog>
+
+  <script>
+    // js
+const openModalButton = document.getElementById('openModal');
+const modal = document.getElementById('modal');
+const closeModalButton = document.getElementById('closeModal');
+ 
+let shortcutEnabled = true;
+let shortcutKey = 'o';
+ 
+openModalButton.addEventListener('click', openModal);
+closeModalButton.addEventListener('click', closeModal);
+ 
+function openModal() {
+  modal.showModal();
+  closeModalButton.focus();
+}
+ 
+function closeModal() {
+  modal.close();
+  openModalButton.focus();
+}
+ 
+modal.addEventListener('close', function () {
+  openModalButton.focus();
+});
+ 
+document.addEventListener('keydown', function (event) {
+  if (
+    shortcutEnabled &&
+    event.ctrlKey &&
+    event.key.toLowerCase() === shortcutKey
+  ) {
+    event.preventDefault();
+    openModal();
+  }
+});
+  </script>
