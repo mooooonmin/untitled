@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JWT 세션 관리</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jwt-decode/3.1.2/jwt-decode.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      button {
+        margin: 5px;
+        padding: 5px 10px;
+      }
+      #sessionInfo {
+        margin-top: 20px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px;
+        text-align: center;
+      }
+      .modal-buttons {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>JWT 세션 관리</h1>
+      <button id="loginBtn">로그인</button>
+      <button id="logoutBtn">로그아웃</button>
+      <div id="sessionInfo"></div>
+    </div>
+ 
+    <div id="sessionModal" class="modal">
+      <div class="modal-content">
+        <p>
+          로그인을 유지하시겠습니까? (로그아웃까지
+          <span id="logoutCountdown"></span>초)
+        </p>
+        <div class="modal-buttons">
+          <button id="keepSessionBtn">네</button>
+          <button id="endSessionBtn">아니오</button>
+        </div>
+      </div>
+    </div>
+ 
+    <script>
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const sessionInfo = document.getElementById('sessionInfo');
+      const sessionModal = document.getElementById('sessionModal');
+      const keepSessionBtn = document.getElementById('keepSessionBtn');
+      const endSessionBtn = document.getElementById('endSessionBtn');
+      const logoutCountdown = document.getElementById('logoutCountdown');
+ 
+      let sessionCheckInterval;
+      let countdownInterval;
+      const WARNING_TIME = 60; // 만료 60초 전에 경고
+      let isWarningShown = false;
+      let countdown;
+ 
+      function createToken(expiresIn = 70) {
+        // 기본 70초
+        const now = Math.floor(Date.now() / 1000);
+        const token = btoa(
+          JSON.stringify({
+            exp: now + expiresIn,
+            iat: now,
+            user: 'example@example.com',
+          }),
+        );
+        localStorage.setItem('token', token);
+        return token;
+      }
+ 
+      function decodeToken(token) {
+        return JSON.parse(atob(token));
+      }
+ 
+      function login() {
+        const token = createToken();
+        startSessionCheck();
+        updateSessionInfo();
+      }
+ 
+      function logout() {
+        localStorage.removeItem('token');
+        clearInterval(sessionCheckInterval);
+        clearInterval(countdownInterval);
+        sessionInfo.textContent = '로그아웃 상태';
+        isWarningShown = false;
+      }
+ 
+      function refreshToken() {
+        const token = createToken();
+        startSessionCheck();
+        updateSessionInfo();
+        hideModal();
+        isWarningShown = false;
+      }
+ 
+      function updateSessionInfo() {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const decoded = decodeToken(token);
+          const expiresIn = decoded.exp - Math.floor(Date.now() / 1000);
+          sessionInfo.textContent = `세션 정보: ${decoded.user} (만료까지 ${expiresIn}초)`;
+        } else {
+          sessionInfo.textContent = '로그아웃 상태';
+        }
+      }
+ 
+      function startSessionCheck() {
+        clearInterval(sessionCheckInterval);
+        sessionCheckInterval = setInterval(() => {
+          const token = localStorage.getItem('token');
+          if (token) {
+            const decoded = decodeToken(token);
+            const now = Math.floor(Date.now() / 1000);
+            const timeLeft = decoded.exp - now;
+ 
+            updateSessionInfo();
+ 
+            if (timeLeft <= WARNING_TIME && !isWarningShown) {
+              showModal(timeLeft);
+              isWarningShown = true;
+            }
+ 
+            if (timeLeft <= 0) {
+              logout();
+              alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+            }
+          }
+        }, 1000);
+      }
+ 
+      function showModal(timeLeft) {
+        sessionModal.style.display = 'block';
+        countdown = timeLeft;
+        updateCountdown();
+        countdownInterval = setInterval(() => {
+          countdown--;
+          updateCountdown();
+          if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            hideModal();
+            logout();
+          }
+        }, 1000);
+      }
+ 
+      function hideModal() {
+        sessionModal.style.display = 'none';
+        clearInterval(countdownInterval);
+      }
+ 
+      function updateCountdown() {
+        logoutCountdown.textContent = countdown;
+      }
+ 
+      loginBtn.addEventListener('click', login);
+      logoutBtn.addEventListener('click', logout);
+      keepSessionBtn.addEventListener('click', refreshToken);
+      endSessionBtn.addEventListener('click', () => {
+        hideModal();
+        logout();
+      });
+ 
+      // 페이지 로드 시 세션 체크 시작
+      const token = localStorage.getItem('token');
+      if (token) {
+        startSessionCheck();
+        updateSessionInfo();
+      } else {
+        sessionInfo.textContent = '로그아웃 상태';
+      }
+    </script>
+  </body>
+</html>
