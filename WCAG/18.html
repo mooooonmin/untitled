@@ -1,0 +1,26 @@
+<!-- 부적절한 예시 -->
+ <!-- 부적절한 예시 -->
+<form>
+    <button>가입하기</button>
+    <input type="text" placeholder="성" />
+    <input type="text" placeholder="이름" />
+    <input type="email" placeholder="이메일" />
+  </form>
+
+  <!-- 올바른 예시 -->
+   <!-- 올바른 예시 -->
+<form>
+    <label for="firstName"
+      >이름:
+      <input type="text" id="firstName" name="firstName" />
+    </label>
+    <label for="lastName"
+      >성:
+      <input type="text" id="lastName" name="lastName" />
+    </label>
+    <label for="email"
+      >이메일:
+      <input type="email" id="email" name="email" />
+    </label>
+    <button type="submit" aria-label="가입하기">가입하기</button>
+  </form>
