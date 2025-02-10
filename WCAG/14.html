@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>애니메이션 제어 예시</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+      header {
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: '';
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: #2196f3;
+      }
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+      .content {
+        padding: 20px;
+        text-align: center;
+      }
+      .animated-element {
+        width: 100px;
+        height: 100px;
+        background-color: #3498db;
+        margin: 20px auto;
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .no-animation {
+        animation: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>애니메이션 제어</h1>
+      <div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="animationToggle" />
+          <span class="slider"></span>
+        </label>
+        애니메이션 켜기
+      </div>
+    </header>
+ 
+    <div class="content">
+      <div class="animated-element" id="animatedElement"></div>
+      <p>위의 요소는 애니메이션이 적용된 예시입니다.</p>
+    </div>
+ 
+    <script>
+      const animationToggle = document.getElementById('animationToggle');
+      const animatedElement = document.getElementById('animatedElement');
+ 
+      // 로컬 스토리지에서 애니메이션 설정 불러오기
+      const isAnimationEnabled =
+        localStorage.getItem('isAnimationEnabled') !== 'false';
+      animationToggle.checked = isAnimationEnabled;
+      updateAnimationState();
+ 
+      // 토글 변경 시 이벤트 처리
+      animationToggle.addEventListener('change', function () {
+        localStorage.setItem('isAnimationEnabled', this.checked);
+        updateAnimationState();
+      });
+ 
+      function updateAnimationState() {
+        if (animationToggle.checked) {
+          animatedElement.classList.remove('no-animation');
+        } else {
+          animatedElement.classList.add('no-animation');
+        }
+      }
+    </script>
+  </body>
+</html>
