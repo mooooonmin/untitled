@@ -1,0 +1,38 @@
+<!-- 버튼 레이블 -->
+
+<!-- 좋은 예시 -->
+<!-- 시각적 텍스트와 일치 -->
+<button aria-label="메뉴">메뉴</button>
+ 
+<!-- 부가 설명이 필요한 경우 시각적 텍스트로 시작 -->
+<button aria-label="검색: 상품명을 입력하세요">검색</button>
+ 
+<!-- 아이콘 버튼의 경우 명확한 설명 -->
+<button aria-label="메뉴 닫기" class="close-icon">✕</button>
+
+<!-- 나쁜 예시 -->
+ 
+<!-- 1. 동일한 동작에 다른 레이블 사용 -->
+<button aria-label="이전 페이지">Back</button>
+<button aria-label="Previous">뒤로</button>
+ 
+<!-- 2. 불필요하게 긴 설명 -->
+<button aria-label="이 버튼을 클릭하면 작성하던 글이 저장됩니다">저장</button>
+ 
+<!-- 3. 동일한 기능에 일관성 없는 레이블 -->
+<div class="pagination">
+   <button aria-label="처음으로">First</button>
+   <button aria-label="Previous">이전</button>
+   <button aria-label="다음 페이지">Next</button>
+   <button aria-label="Last">마지막</button>
+</div>
+
+
+<!-- 폼 입력 필드 -->
+
+ <!-- 좋은 예시 -->
+<label for="name">이름:</label> <input id="name" type="text" name="name" />
+
+<!-- 나쁜 예시 -->
+<label for="name">이름:</label>
+<input id="name" type="text" name="name" aria-label="성 입력" />
