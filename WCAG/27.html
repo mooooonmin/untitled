@@ -1,0 +1,97 @@
+<!-- html -->
+<div class="dropdown">
+    <button id="dropbtn">드롭다운</button>
+    <div id="myDropdown" class="dropdown-content">
+      <a href="#home">홈</a>
+      <a href="#about">소개</a>
+      <a href="#contact">연락처</a>
+    </div>
+  </div>
+   
+  <script>
+    const dropbtn = document.getElementById('dropbtn');
+    const dropdown = document.getElementById('myDropdown');
+   
+    // 포커스 시 드롭다운 메뉴 자동 열기 (문제가 되는 부분)
+    dropbtn.addEventListener('focus', function () {
+      dropdown.classList.add('show');
+    });
+   
+    dropbtn.addEventListener('blur', function () {
+      dropdown.classList.remove('show');
+    });
+  </script>
+
+/* css */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+ 
+#dropbtn {
+  background-color: #3075ff;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+ 
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 120px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  transform: translateY(10px);
+  font-size: 14px;
+}
+ 
+.dropdown-content a {
+  color: #333;
+  padding: 6px 12px;
+  text-decoration: none;
+  display: block;
+}
+ 
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+ 
+/* show 클래스가 추가되면 드롭다운 표시 */
+.show {
+  display: block;
+}
+
+
+<div class="dropdown">
+    <button id="dropbtn" aria-haspopup="true" aria-expanded="false">
+      드롭다운
+    </button>
+    <div id="myDropdown" class="dropdown-content" role="menu">
+      <a href="#home" role="menuitem">홈</a>
+      <a href="#about" role="menuitem">소개</a>
+      <a href="#contact" role="menuitem">연락처</a>
+    </div>
+  </div>
+   
+  <script>
+    const dropbtn = document.getElementById('dropbtn');
+    const dropdown = document.getElementById('myDropdown');
+   
+    function toggleDropdown() {
+      const expanded = dropbtn.getAttribute('aria-expanded') === 'true';
+      dropbtn.setAttribute('aria-expanded', !expanded);
+      dropdown.classList.toggle('show');
+    }
+   
+    dropbtn.addEventListener('click', toggleDropdown);
+   
+    dropbtn.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleDropdown();
+      }
+    });
+  </script>
