@@ -1,0 +1,25 @@
+<form action="/change-language" method="post">
+    <fieldset>
+      <legend>웹사이트 언어 선택</legend>
+      <div>
+        <input type="radio" id="lang-ko" name="language" value="ko" />
+        <label for="lang-ko">한국어</label>
+      </div>
+      <div>
+        <input type="radio" id="lang-en" name="language" value="en" />
+        <label for="lang-en">English</label>
+      </div>
+      <div>
+        <input type="radio" id="lang-ja" name="language" value="ja" />
+        <label for="lang-ja">日本語</label>
+      </div>
+      <div>
+        **<button type="submit">
+          언어 변경
+          <span class="visually-hidden"
+            >선택한 언어로 페이지를 다시 로드합니다</span
+          ></button
+        >**
+      </div>
+    </fieldset>
+  </form>
