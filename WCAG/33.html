@@ -1,0 +1,57 @@
+<form class="form-group">
+    <label for="password">비밀번호</label>
+    <input
+      type="password"
+      id="password"
+      aria-describedby="password-requirements password-error"
+      aria-required="true"
+    />
+   
+    <!-- 비밀번호 요구사항 -->
+    <div id="password-requirements" class="requirements">
+      <ul>
+        <li id="length-check">최소 8자 이상</li>
+        <li id="uppercase-check">대문자 1자 이상</li>
+        <li id="number-check">숫자 1자 이상</li>
+      </ul>
+    </div>
+   
+    <!-- 상세 오류 메시지 -->
+    <p
+      id="password-error"
+      class="error-message"
+      role="alert"
+      aria-live="polite"
+      hidden
+    ></p>
+  </form>
+
+  <script>
+    document.getElementById('password').addEventListener('blur', function () {
+  const password = this.value;
+  const errorDisplay = document.getElementById('password-error');
+  const errors = [];
+ 
+  // 상세한 오류 검사
+  if (password.length < 8) {
+    errors.push('비밀번호는 최소 8자 이상이어야 합니다.');
+  }
+  if (!/[A-Z]/.test(password)) {
+    errors.push('대문자를 하나 이상 포함해주세요.');
+  }
+  if (!/[0-9]/.test(password)) {
+    errors.push('숫자를 하나 이상 포함해주세요.');
+  }
+ 
+  // 오류 표시
+  if (errors.length > 0) {
+    this.setAttribute('aria-invalid', 'true');
+    errorDisplay.hidden = false;
+    errorDisplay.textContent = errors.join(' ');
+  } else {
+    this.setAttribute('aria-invalid', 'false');
+    errorDisplay.hidden = true;
+    errorDisplay.textContent = '';
+  }
+});
+  </script>
