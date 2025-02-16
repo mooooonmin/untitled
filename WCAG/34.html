@@ -1,0 +1,27 @@
+<form id="legalForm">
+    <!-- 법적 문서 동의 체크박스들 -->
+    <button type="button" onclick="reviewSubmission()">검토 및 제출</button>
+  </form>
+   
+  <div id="reviewModal" style="display: none;">
+    <h2>제출 내용 확인</h2>
+    <div id="reviewContent"></div>
+    <button onclick="confirmSubmission()">확인 및 제출</button>
+    <button onclick="editSubmission()">수정하기</button>
+  </div>
+   
+  <script>
+    function reviewSubmission() {
+      // 폼 데이터 수집 및 표시
+      document.getElementById('reviewContent').innerHTML = '수집된 데이터 표시';
+      document.getElementById('reviewModal').style.display = 'block';
+    }
+   
+    function confirmSubmission() {
+      document.getElementById('legalForm').submit();
+    }
+   
+    function editSubmission() {
+      document.getElementById('reviewModal').style.display = 'none';
+    }
+  </script>
