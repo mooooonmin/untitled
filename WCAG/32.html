@@ -1,0 +1,37 @@
+<form class="form-group">
+    <label for="password">비밀번호</label>
+    <input
+      type="password"
+      id="password"
+      aria-describedby="password-error"
+      aria-required="true"
+    />
+    <p id="password-error" class="error-message" role="alert" hidden></p>
+  </form>
+
+  <script>
+    document.getElementById('password').addEventListener('blur', function () {
+  const errorDisplay = document.getElementById('password-error');
+ 
+  if (this.value.length < 8) {
+    // 기본적인 오류 표시
+    this.setAttribute('aria-invalid', 'true');
+    errorDisplay.hidden = false;
+    errorDisplay.textContent = '비밀번호 오류가 발생했습니다.';
+  } else {
+    this.setAttribute('aria-invalid', 'false');
+    errorDisplay.hidden = true;
+    errorDisplay.textContent = '';
+  }
+});
+
+// css
+.form-group input[aria-invalid='true'] {
+  border-color: red;
+}
+ 
+.error-message {
+  color: red;
+  margin-top: 0.5rem;
+}
+  </script>
