@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Collapsible Multi-Select 예시</title>
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    /* 모달 스타일 (예시) */
+    .modal {
+      display: none; /* 기본은 숨김 */
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      min-width: 400px;
+      min-height: 300px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      border-radius: 5px;
+    }
+
+    /* 검색 영역 */
+    .search-area {
+      margin-bottom: 10px;
+    }
+    .search-area label {
+      margin-right: 5px;
+    }
+    .search-area input {
+      margin-right: 10px;
+    }
+
+    /* 트리 스타일 */
+    .tree-container {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    .department-tree, .department-tree ul {
+      list-style-type: none; /* 불릿 제거 */
+      padding-left: 20px;    /* 들여쓰기 */
+      margin: 5px 0;
+    }
+    .department-tree li {
+      margin: 3px 0;
+      cursor: default;
+      position: relative;
+    }
+
+    /* 토글 버튼 (+/-) */
+    .toggle-btn {
+      display: inline-block;
+      width: 16px;
+      text-align: center;
+      cursor: pointer;
+      margin-right: 5px;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .toggle-btn.empty {
+      visibility: hidden; /* 자식이 없을 때는 버튼 숨김 */
+    }
+
+    /* 부모-자식 레벨 구분선 (선택 사항) */
+    .department-tree li::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 1em;
+      width: 10px;
+      height: 0;
+      border-bottom: 1px solid #ccc;
+    }
+    .department-tree li::after {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 1em;
+      height: 100%;
+      border-left: 1px solid #ccc;
+    }
+    .department-tree li:last-child::after {
+      height: 8px; /* 마지막 항목은 세로선 짧게 */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 모달 열기 버튼 (데모용) -->
+  <button id="openModal">검색</button>
+
+  <!-- 모달 영역 -->
+  <div class="modal" id="departmentModal">
+    <div class="modal-content">
+      <h2>소견서 검색</h2>
+
+      <!-- 검색 영역 -->
+      <div class="search-area">
+        <label>회사명:</label>
+        <input type="text" id="companyName" value="OO히말리아" />
+
+        <label>부서명:</label>
+        <input type="text" id="departmentSearch" placeholder="부서 검색..." />
+        <button id="btnDeptSearch">검색</button>
+      </div>
+
+      <!-- 트리 영역 -->
+      <div class="tree-container">
+        <ul class="department-tree" id="deptTreeRoot">
+          <!-- 계층 구조가 동적으로 렌더링 됩니다. -->
+        </ul>
+      </div>
+
+      <!-- 하단 버튼 -->
+      <div style="margin-top: 10px; text-align: right;">
+        <button id="btnSelectDepartment">선택</button>
+        <button id="btnCloseModal">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      // 모달 열기/닫기
+      $('#openModal').on('click', function() {
+        $('#departmentModal').show();
+      });
+      $('#btnCloseModal').on('click', function() {
+        $('#departmentModal').hide();
+      });
+
+      // 트리 데이터(부서 목록) 예시
+      const departmentData = [
+        {
+          id: 1,
+          name: 'OO종합물류',
+          children: [
+            {
+              id: 2,
+              name: '경영지원',
+              children: [
+                { id: 3, name: '브랜드전략개발' },
+                { id: 4, name: '인사총무' }
+              ]
+            },
+            {
+              id: 5,
+              name: '신사업팀'
+            }
+          ]
+        },
+        {
+          id: 6,
+          name: '통합물류',
+          children: [
+            {
+              id: 7,
+              name: 'OO홍보실'
+            }
+          ]
+        },
+        {
+          id: 8,
+          name: '○○사업부',
+          children: [
+            { id: 9, name: '자재팀' },
+            { id: 10, name: '영업팀' }
+          ]
+        }
+      ];
+
+      // 페이지 로딩 시 트리 렌더링
+      renderDepartmentTree(departmentData, $('#deptTreeRoot'));
+
+      // 부서 검색 버튼 (데모)
+      $('#btnDeptSearch').on('click', function() {
+        const keyword = $('#departmentSearch').val().trim();
+        console.log('부서 검색:', keyword);
+        // 실제로는 departmentData를 필터링하거나 서버로 요청
+      });
+
+      // 부서 선택 버튼
+      $('#btnSelectDepartment').on('click', function() {
+        const selectedIds = getSelectedDepartmentIds();
+        alert('선택된 부서 ID: ' + selectedIds.join(', '));
+        $('#departmentModal').hide();
+      });
+    });
+
+    /**
+     * 트리를 렌더링하는 함수
+     * @param {Array} data - 계층 구조를 가진 부서 데이터
+     * @param {jQuery} $container - 트리를 넣을 UL 요소
+     */
+    function renderDepartmentTree(data, $container) {
+      $container.empty(); // 기존 내용 초기화
+
+      data.forEach(function(dept) {
+        const hasChildren = dept.children && dept.children.length > 0;
+
+        // li 생성
+        const $li = $('<li></li>');
+
+        // 토글 버튼 (+/-) - 자식이 없으면 숨김(empty 클래스)
+        const $toggle = $('<span class="toggle-btn">+</span>');
+        if (!hasChildren) {
+          $toggle.addClass('empty'); // 자식 없으면 숨김 처리
+        }
+
+        // 체크박스
+        const $checkbox = $(`<input type="checkbox" class="dept-checkbox" data-id="${dept.id}" />`);
+
+        // 부서명
+        const $label = $('<span></span>').text(dept.name);
+
+        // 자식 트리 (재귀)
+        let $childUl = null;
+        if (hasChildren) {
+          $childUl = $('<ul style="display: none;"></ul>'); // 처음엔 접어서(display:none)
+          renderDepartmentTree(dept.children, $childUl);    // 재귀 호출
+        }
+
+        // 요소 연결
+        $li.append($toggle).append($checkbox).append($label);
+        if ($childUl) {
+          $li.append($childUl);
+        }
+
+        // 토글 버튼 클릭 이벤트 (여기서 코드가 끊기지 않도록 주의)
+        $toggle.on('click', function(e) {
+          e.stopPropagation(); // 이벤트 버블링 방지
+          if ($childUl && $childUl.is(':visible')) {
+            $childUl.slideUp();
+            $(this).text('+');
+          } else if ($childUl) {
+            $childUl.slideDown();
+            $(this).text('-');
+          }
+        });
+
+        $container.append($li);
+      });
+    }
+
+    /**
+     * 선택된 체크박스(부서)의 ID 목록을 배열로 반환
+     */
+    function getSelectedDepartmentIds() {
+      const selectedIds = [];
+      $('.dept-checkbox:checked').each(function() {
+        selectedIds.push($(this).data('id'));
+      });
+      return selectedIds;
+    }
+  </script>
+</body>
+</html>
