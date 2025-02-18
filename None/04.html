@@ -1,0 +1,126 @@
+
+<html lang="ko">
+    <head>
+        <title>exceljs</title>
+    </head>
+    <body>
+        <button id="down">엑셀 다운로드</button>
+        <script src="test_exceljs_js.js"></script>
+        <!-- CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script> 
+        <!-- npm으로 설치 하려면
+            $ npm install exceljs -->
+    </body>
+</html>
+
+<script>
+// 파일 다운로드 
+document.querySelector('#down').addEventListener('click', makeFile);
+
+function makeFile (e) {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('tab_1');
+
+    download(workbook, 'test').then(r => {});
+}
+
+const download = async (workbook, fileName) => {
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName + '.xlsx';
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+};
+
+// 1. 셀 선택
+// 열 선택
+sheet.getColumn(1);
+// 행 선택
+sheet.getRow(3);
+
+// 열의 알파뱃으로 쓰기
+sheet.getCell('C9');
+// 숫자로만 쓰기
+sheet.getCell(2,10);
+
+// ------------------------------------------------
+
+// 2. 셀 합치기
+sheet.mergeCells('V9 : V11');
+
+// 열이 2개 이상의 경우
+sheet.mergeCells('W9 : Z9');
+
+// 행과 열의 번호로만 쓰게 될 경우
+// ([시작행],[시작열],[끝행],[끝열])
+sheet.mergeCells(3,3,4,4)
+
+// ------------------------------------------------
+
+// 3. 값 넣기
+sheet.getCell('D4').value = 'hey dev';
+
+sheet.getCell('C11').value = {
+        richText: [{
+            text: '주소',
+            font: {size: 9, italic: true}
+        }]
+    };
+
+    function makeFile (e) {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('tab_1');
+
+    sheet.getCell('A2').value = 3.66;
+    sheet.getCell(2,4).value = 'program';
+    sheet.mergeCells('C4 : D5');
+    sheet.getCell('D5').value = 'merge';
+    sheet.getCell('B6').value = {
+        richText: [{
+            text: '리치텍스트',
+            font: {size: 9, italic: true}
+        }]
+    };
+
+    download(workbook, 'test').then(r => {});
+}
+
+// ------------------------------------------------
+
+// 4. 정렬 설정
+
+worksheet.getCell('A10').alignment = { vertical: 'top', horizontal: 'left' };
+worksheet.getCell('B7').alignment = { vertical: 'middle', horizontal: 'center' };
+worksheet.getCell('C3').alignment = { vertical: 'bottom', horizontal: 'right' };
+
+// 줄바꿈 설정
+worksheet.getCell('d6').alignment = { wrapText: true };
+
+// ------------------------------------------------
+
+// 5. 테두리 만들기
+
+worksheet.getCell('E3').border = {
+  top: {style:'thin', color: {argb:'DB576D'}},
+  left: {style:'thin', color: {argb:'DB576D'}},
+  bottom: {style:'medium', color: {argb:'DB576D'}},
+  right: {style:'medium', color: {argb:'DB576D'}}
+};
+
+// ------------------------------------------------
+
+// 6. 색 넣기
+
+worksheet.getCell('U5').fill = {
+  type: 'pattern',
+  pattern:'solid',
+  fgColor:{argb:'D9D9D9'},
+};
+
+</script>
