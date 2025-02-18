@@ -18,8 +18,16 @@
 document.querySelector('#down').addEventListener('click', makeFile);
 
 function makeFile (e) {
+
+    // workbook(엑셀 파일 하나를 구성하는 여러 시트로 이루어진 단위) 생성
     const workbook = new ExcelJS.Workbook();
+    // sheet 생성('tab_1' : 시트 이름)
     const sheet = workbook.addWorksheet('tab_1');
+
+    /**
+     * workbook은 하나의 파일
+     * 하나의 workbook은 여러개의 worksheet를 가질 수 있음
+     * */
 
     download(workbook, 'test').then(r => {});
 }
@@ -30,12 +38,13 @@ const download = async (workbook, fileName) => {
     const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
-    const url = window.URL.createObjectURL(blob);
+    const url = window.URL.createObjectURL(blob); // blob으로 객체 URL 생성
     const anchor = document.createElement('a');
     anchor.href = url;
     anchor.download = fileName + '.xlsx';
+    // anchor를 다운로드 링크로 만들고 강제로 클릭 이벤트 발생
     anchor.click();
-    window.URL.revokeObjectURL(url);
+    window.URL.revokeObjectURL(url); // 메모리에서 해제
 };
 
 // 1. 셀 선택
