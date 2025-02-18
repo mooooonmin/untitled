@@ -9,20 +9,21 @@
   </div>
    
   <script>
-    const dropbtn = document.getElementById('dropbtn');
-    const dropdown = document.getElementById('myDropdown');
+    const dropbtn1 = document.getElementById('dropbtn');
+    const dropdown1 = document.getElementById('myDropdown');
    
     // 포커스 시 드롭다운 메뉴 자동 열기 (문제가 되는 부분)
-    dropbtn.addEventListener('focus', function () {
-      dropdown.classList.add('show');
+    dropbtn1.addEventListener('focus', function () {
+      dropdown1.classList.add('show');
     });
    
-    dropbtn.addEventListener('blur', function () {
-      dropdown.classList.remove('show');
+    dropbtn1.addEventListener('blur', function () {
+      dropdown1.classList.remove('show');
     });
   </script>
 
-/* css */
+<style>
+  /* css */
 .dropdown {
   position: relative;
   display: inline-block;
@@ -63,7 +64,7 @@
 .show {
   display: block;
 }
-
+</style>
 
 <div class="dropdown">
     <button id="dropbtn" aria-haspopup="true" aria-expanded="false">
